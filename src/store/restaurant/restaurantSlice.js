@@ -4,6 +4,7 @@ import { getRestaurants } from "../../api";
 const initialState = {
   status: "idle",
   restaurant: undefined,
+  dishes: undefined,
 };
 
 export const getRestaurant = createAsyncThunk(
@@ -21,6 +22,20 @@ const restaurantSlice = createSlice({
     updateStatus: (state) => {
       state.status = "idle";
     },
+    getDishes: (state, action) => {
+      state.dishes = state.restaurant?.table_menu_list
+        ?.find((item) => item.menu_category_id === action.payload)
+        .category_dishes.map((item) => ({ ...item, quantity: 0 }));
+    },
+    setQuantity: (state, action) => {
+      const dishIndex = state.dishes.findIndex(
+        (item) => item.dish_id === action.payload.id,
+      );
+      state.dishes[dishIndex] = {
+        ...state.dishes[dishIndex],
+        quantity: action.payload.quantity,
+      };
+    },
   },
   extraReducers(builder) {
     builder
@@ -37,10 +52,18 @@ const restaurantSlice = createSlice({
   },
 });
 
-export const { updateStatus } = restaurantSlice.actions;
+export const { updateStatus, getDishes, setQuantity } = restaurantSlice.actions;
 
 export default restaurantSlice.reducer;
 
 export const selectRestaurant = (state) => {
   return state.restaurant.restaurant;
+};
+
+export const selectDishes = (state) => {
+  return state.restaurant.dishes;
+};
+
+export const selectCartCount = (state) => {
+  return state.restaurant.dishes?.reduce((acc, curr) => acc + curr.quantity, 0);
 };

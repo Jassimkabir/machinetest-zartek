@@ -1,24 +1,26 @@
 import { ShoppingCart } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import { selectRestaurant } from '../../store/restaurant/restaurantSlice';
+import {
+  selectCartCount,
+  selectRestaurant,
+} from '../../store/restaurant/restaurantSlice';
 import { StyledNavLink } from './style';
 
 const Header = () => {
-  const cartItems = 0;
-
   const restaurant = useSelector(selectRestaurant);
+  const cartCount = useSelector(selectCartCount);
 
   return (
     <div className='sticky top-0 shadow-lg z-10 bg-white'>
       <div className='container mx-auto'>
         <div className='p-4 py-4 flex justify-between items-center'>
-          <h1 className='font-bold'>{restaurant?.restaurant_name}</h1>
+          <h1 className='font-bold text-lg'>{restaurant?.restaurant_name}</h1>
           <div className='flex justify-between items-center gap-4'>
             <span>My orders</span>
             <div className='relative'>
               <ShoppingCart />
               <div className='p-1 w-5 h-5 flex justify-center items-center bg-red-700 rounded-full absolute top-[-8px] right-[-8px]'>
-                <span className='text-white text-xs'>{cartItems}</span>
+                <span className='text-white text-xs'>{cartCount}</span>
               </div>
             </div>
           </div>
