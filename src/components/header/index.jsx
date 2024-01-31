@@ -29,7 +29,7 @@ const Header = () => {
           {restaurant?.table_menu_list?.map((item) => (
             <StyledNavLink
               key={item.menu_category_id}
-              className='p-4 text-nowrap border-b-2 border-white hover:border-b-2 hover:border-red-600 transition-all hover:text-red-600'
+              className='p-4 text-nowrap whitespace-nowrap border-b-2 border-white hover:border-b-2 hover:border-red-600 transition-all hover:text-red-600'
               to={`/${item.menu_category_id}`}
             >
               {item.menu_category}

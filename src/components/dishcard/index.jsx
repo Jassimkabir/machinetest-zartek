@@ -21,19 +21,19 @@ const DishCard = ({ data }) => {
   return (
     <div className='w-full flex justify-between gap-4 border-b pb-4'>
       <div className='w-full flex flex-col justify-between gap-4 items-start'>
-        <div className='w-full'>
+        <div className='w-full flex flex-col gap-2'>
           <div className='flex items-center gap-3'>
             <TypeIndicator type={data.dish_Type} />
             <h1 className='text-lg font-medium'>{data.dish_name}</h1>
           </div>
-          <div className='flex justify-between items-center'>
-            <span>
+          <div className='flex justify-between items-center text-sm'>
+            <span className='font-medium'>
               {data.dish_currency} {data.dish_price}
             </span>
             <span>{data.dish_calories} Calories</span>
           </div>
         </div>
-        <span className='text-xs text-gray-500'>{data.dish_description}</span>
+        <span className='text-sm text-gray-500'>{data.dish_description}</span>
         {data.dish_Availability && (
           <div className='w-36 flex justify-between items-center bg-green-600 rounded-full text-white py-1 font-medium'>
             <button
@@ -50,9 +50,9 @@ const DishCard = ({ data }) => {
           </div>
         )}
         {data.addonCat.length > 0 ? (
-          <span className='text-red-600'>Customization available</span>
+          <span className='text-red-600 text-sm'>Customization available</span>
         ) : !data.dish_Availability ? (
-          <span className='text-red-600'>Not available</span>
+          <span className='text-red-600 text-sm'>Not available</span>
         ) : null}
       </div>
       <div className='w-60 h-40 max-sm:w-32 max-sm:h-24'>
