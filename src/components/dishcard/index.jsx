@@ -1,21 +1,30 @@
 import { useDispatch } from 'react-redux';
 import { setQuantity } from '../../store/restaurant/restaurantSlice';
+import { useParams } from 'react-router-dom';
 
 /* eslint-disable react/prop-types */
 const DishCard = ({ data }) => {
   const dispatch = useDispatch();
+  const { id } = useParams();
 
   const decreaseQuantity = () => {
     dispatch(
       setQuantity({
         id: data.dish_id,
         quantity: data.quantity - 1,
+        categoryId: id,
       })
     );
   };
 
   const increaseQuantity = () => {
-    dispatch(setQuantity({ id: data.dish_id, quantity: data.quantity + 1 }));
+    dispatch(
+      setQuantity({
+        id: data.dish_id,
+        quantity: data.quantity + 1,
+        categoryId: id,
+      })
+    );
   };
 
   return (

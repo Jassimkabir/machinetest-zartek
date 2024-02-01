@@ -4,7 +4,6 @@ import { getRestaurants } from "../../api";
 const initialState = {
   status: "idle",
   restaurant: undefined,
-  dishes: undefined,
 };
 
 export const getRestaurant = createAsyncThunk(
@@ -22,19 +21,21 @@ const restaurantSlice = createSlice({
     updateStatus: (state) => {
       state.status = "idle";
     },
-    getDishes: (state, action) => {
-      state.dishes = state.restaurant?.table_menu_list
-        ?.find((item) => item.menu_category_id === action.payload)
-        .category_dishes.map((item) => ({ ...item, quantity: 0 }));
-    },
     setQuantity: (state, action) => {
-      const dishIndex = state.dishes.findIndex(
-        (item) => item.dish_id === action.payload.id,
+      const { restaurant } = state;
+      const updatedMenuList = restaurant?.table_menu_list.map((category) =>
+        category.menu_category_id === action.payload.categoryId
+          ? {
+              ...category,
+              category_dishes: category.category_dishes.map((dish) =>
+                dish.dish_id === action.payload.id
+                  ? { ...dish, quantity: action.payload.quantity }
+                  : dish,
+              ),
+            }
+          : category,
       );
-      state.dishes[dishIndex] = {
-        ...state.dishes[dishIndex],
-        quantity: action.payload.quantity,
-      };
+      state.restaurant = { ...restaurant, table_menu_list: updatedMenuList };
     },
   },
   extraReducers(builder) {
@@ -44,7 +45,18 @@ const restaurantSlice = createSlice({
       })
       .addCase(getRestaurant.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.restaurant = action.payload[0];
+        state.restaurant = {
+          ...action.payload[0],
+          table_menu_list: action.payload[0]?.table_menu_list.map(
+            (category) => ({
+              ...category,
+              category_dishes: category.category_dishes.map((dish) => ({
+                ...dish,
+                quantity: 0,
+              })),
+            }),
+          ),
+        };
       })
       .addCase(getRestaurant.rejected, (state) => {
         state.status = "failed";
@@ -52,7 +64,7 @@ const restaurantSlice = createSlice({
   },
 });
 
-export const { updateStatus, getDishes, setQuantity } = restaurantSlice.actions;
+export const { updateStatus, setQuantity } = restaurantSlice.actions;
 
 export default restaurantSlice.reducer;
 
@@ -60,10 +72,10 @@ export const selectRestaurant = (state) => {
   return state.restaurant.restaurant;
 };
 
-export const selectDishes = (state) => {
-  return state.restaurant.dishes;
-};
-
 export const selectCartCount = (state) => {
-  return state.restaurant.dishes?.reduce((acc, curr) => acc + curr.quantity, 0);
+  return state.restaurant.restaurant?.table_menu_list
+    .map((item) =>
+      item.category_dishes.reduce((acc, curr) => acc + curr.quantity, 0),
+    )
+    .reduce((acc, cur) => acc + cur, 0);
 };
